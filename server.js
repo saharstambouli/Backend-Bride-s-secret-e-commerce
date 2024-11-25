@@ -19,7 +19,7 @@ app.use(express.json())
 
 
 // app.use(cors())
-const PORT = process.env.PORT || 8000
+const PORT = process.env.PORT || 5000
 app.use('/uploads', express.static('uploads'));
 app.use('/', routes);
 
