@@ -7,7 +7,7 @@ const Review = require("../models/Reviews");
 const mongoose = require('mongoose');
 const moment = require('moment')
 
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 exports.checkUserExists = async (email) => {
     try {

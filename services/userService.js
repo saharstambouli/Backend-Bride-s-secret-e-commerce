@@ -4,7 +4,7 @@ const userCartModel = require("../models/userCart");
 const purchaseModel = require("../models/purchase");
 const mongoose = require('mongoose');
 
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 exports.checkUserExists = async (email) => {
     try {
