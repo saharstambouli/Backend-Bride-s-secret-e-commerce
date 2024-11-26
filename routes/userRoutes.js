@@ -12,7 +12,7 @@ router.patch('/toggleProduct',authMiddleware.jwtMiddleware,userController.toggle
 router.delete('/deleteFromCart',authMiddleware.jwtMiddleware,userController.deleteFromCart)
 router.post('/purchase',authMiddleware.jwtMiddleware,userController.purchase)
 router.delete('/deleteFromWishList',authMiddleware.jwtMiddleware,userController.deleteFromWishlist)
-router.get('/send-newsletter',userController.Newsletter)
+router.post('/send-newsletter',userController.Newsletter)
 
 
 module.exports = router
