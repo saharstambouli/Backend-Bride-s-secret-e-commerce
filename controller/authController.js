@@ -58,3 +58,24 @@ exports.resetPassword = async (req, res) => {
 }
 
 
+exports.updatePassword = async (req, res) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ message: 'User not authenticated' });
+      }
+  
+      const { oldPassword, newPassword } = req.body;
+      const user = req.user;
+  
+      const result = await authService.updatePassword(user, oldPassword, newPassword);
+  
+      if (result.success) {
+        return res.status(200).json({ message: 'Password updated successfully' });
+      } else {
+        return res.status(400).json({ message: result.message });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };

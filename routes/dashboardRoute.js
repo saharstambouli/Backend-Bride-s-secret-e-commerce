@@ -15,5 +15,11 @@ router.get('/monthlyrevenues/:month/:year', dashboardController.getDashboardData
 router.post('/addreviews',authMiddleware.jwtMiddleware,dashboardController.addReview)
 router.get('/getreviews',  dashboardController.getReviews);
 router.get('/getallpurchases',  dashboardController.getAllPurchases);
+router.get('/getuser',  dashboardController.getUser);
+router.delete('/deleteproduct',  dashboardController.deleteProduct);
+router.patch('/updateproduct',  dashboardController.updateProduct);
+router.get('/getpurchases',dashboardController.fetchPurchases)
+router.get('/getusers',dashboardController.getUserCountController)
+router.delete('/deleterents',dashboardController.deleteRentByDatesAndProduct)
 
 module.exports = router;

@@ -1,4 +1,5 @@
 
+
 const userModel = require("../models/userModel");
 const productModel = require("../models/productModel");
 const purchaseModel = require("../models/purchase");
@@ -7,7 +8,7 @@ const Review = require("../models/Reviews");
 const mongoose = require('mongoose');
 const moment = require('moment')
 
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 
 exports.checkUserExists = async (email) => {
     try {
@@ -76,7 +77,7 @@ exports.login = async (email, password) => {
 exports.getuserByID = async (id) => {
     try {
         const user = await userModel.findById(id)
-                   .select('UserName email cart favorites isadmin')
+                   .select('email cart favorites isadmin')
             .populate({
                 path: "cart",
                 populate: {
@@ -87,7 +88,7 @@ exports.getuserByID = async (id) => {
         return user;
     } catch (error) {
         console.log(error);
-        throw error; // Optionally, you can throw the error to handle it in the calling function
+        throw error; 
     }
 };
 
@@ -363,3 +364,93 @@ exports.getAllPurchases = async () => {
 };
 
 
+
+//////////////////////////////DELETE PRODUCT ////////////
+
+
+exports.deleteProductById = async (productId) => {
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+        throw new Error('Invalid product ID');
+    }
+
+    try {
+        const deletedProduct = await productModel.findByIdAndDelete(productId);
+        if (!deletedProduct) {
+            throw new Error('Product not found');
+        }
+        return deletedProduct;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
+
+
+/////////////////////UPDATE PRODUCT ////////////////
+
+exports.updateProductById = async (productId, updateData) => {
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+        throw new Error('Invalid product ID');
+    }
+
+    const updatedProduct = await productModel.findByIdAndUpdate(
+        productId,
+        { $set: updateData },
+        { new: true, runValidators: true }
+    );
+
+    if (!updatedProduct) {
+        throw new Error('Product not found');
+    }
+
+    return updatedProduct;
+};
+
+
+////////////////////////GET PURCHASES 
+
+
+exports.getAllPurchases = async () => {
+    try {
+        // Fetch all purchases
+        const purchases = await purchaseModel.find()
+            .populate('userID', 'name email') // Populate user data (optional)
+            .populate('products', 'name price') // Populate products data (optional)
+            .exec();
+
+        // Calculate the total price for each purchase
+        const purchasesWithTotalPrice = purchases.map((purchase) => ({
+            ...purchase.toObject(), // Convert purchase document to plain object
+            total_price: purchase.total_price, // Add the total price field
+        }));
+
+        return purchasesWithTotalPrice;
+    } catch (error) {
+        throw new Error('Error fetching all purchases: ' + error.message);
+    }
+};
+
+////////////GET USERS 
+
+exports.getUserCount = async () => {
+    try {
+      const count = await userModel.countDocuments();  // Get the number of documents in the User collection
+      return count;
+    } catch (error) {
+      throw new Error('Error fetching user count: ' + error.message);
+    }
+  };
+
+  exports.deleteRentByDatesAndProduct = async (startDate, endDate, productId) => {
+    try {
+      const rent = await productModel.findOneAndDelete({
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
+        productId: productId,
+      });
+  
+      return rent || null;
+    } catch (error) {
+      throw new Error('Error deleting rent');
+    }
+  };
+  

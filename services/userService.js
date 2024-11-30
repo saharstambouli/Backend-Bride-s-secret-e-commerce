@@ -2,6 +2,7 @@ const userModel = require("../models/userModel");
 const productModel = require("../models/productModel");
 const userCartModel = require("../models/userCart");
 const purchaseModel = require("../models/purchase");
+const messageModel=require("../models/messageModel")
 const mongoose = require('mongoose');
 
 const bcrypt = require('bcryptjs');
@@ -375,3 +376,13 @@ exports.deleteFromWishlist = async (productID, userID) => {
         throw error;
     }
 };
+
+
+exports.saveMessage = async ({ name, email, message }) => {
+    try {
+      const newMessage = new messageModel({ name, email, message });
+      return await newMessage.save();
+    } catch (error) {
+      throw new Error('Error saving message: ' + error.message);
+    }
+  };

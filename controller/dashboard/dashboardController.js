@@ -45,6 +45,28 @@ exports.login = async (req, res) => {
 };
 
 
+exports.getUser = async (req, res) => {
+    try {
+        // Call the service to fetch the user
+        const user = await dashboardService.getuserByID(req.userID);
+
+        // If the user is not found, send a 404 response
+        if (!user) {
+            return res.status(404).send({ error: 'User not found' });
+        }
+
+        // If the user is found, send it as a response
+        return res.status(200).send(user); // Ensure res.send is used
+    } catch (error) {
+        console.error('Controller error:', error);
+
+        // Send a 500 response in case of server errors
+        return res.status(500).send({ error: 'Internal server error' });
+    }
+};
+
+
+
 
 exports.getMonthlyOrders = async (req, res) => {
     try {
@@ -115,18 +137,7 @@ exports.getDashboardData = async (req, res) => {
     }
 };
 
-//////////////////////////GET REVIEWS //////////////////////
 
-
-// exports.getReviews = async (req, res) => {
-//     try {
-//         // Call the service to fetch reviews
-//         const reviews = await dashboardService.getReviews();
-//         res.status(200).json({ message: 'Avis récupérés avec succès.', reviews });
-//     } catch (error) {
-//         res.status(500).json({ message: 'Erreur serveur : ' + error.message });
-//     }
-// };
 
 
 exports.getReviews = async (req, res) => {
@@ -157,3 +168,101 @@ exports.getAllPurchases = async (req, res) => {
         });
     }
 };
+
+////////////////////////DELETE PRODUCT ////////////////
+// controllers/productController.js
+
+
+exports.deleteProduct = async (req, res) => {
+    const { id } = req.body;
+
+    if (!id) {
+        return res.status(400).json({ message: 'Product ID is required' });
+    }
+
+    try {
+        const deletedProduct = await dashboardService.deleteProductById(id);
+        return res.status(200).json({
+            message: 'Product deleted successfully',
+            product: deletedProduct,
+        });
+    } catch (error) {
+        const statusCode = error.message === 'Product not found' ? 404 : 500;
+        return res.status(statusCode).json({
+            message: error.message,
+        });
+    }
+};
+
+/////////////////////UPDATE PRODUCT///////////
+
+
+exports.updateProduct = async (req, res) => {
+    const { id, ...updateData } = req.body;
+
+    if (!id) {
+        return res.status(400).json({ message: 'Product ID is required' });
+    }
+
+    try {
+        const updatedProduct = await dashboardService.updateProductById(id, updateData);
+        return res.status(200).json({
+            message: 'Product updated successfully',
+            product: updatedProduct,
+        });
+    } catch (error) {
+        const statusCode = error.message === 'Product not found' ? 404 : 500;
+        return res.status(statusCode).json({
+            message: error.message,
+        });
+    }
+};
+
+///////////////////////////////GET PURCHASES //////////////
+
+exports.fetchPurchases = async (req, res) => {
+    try {
+        const purchases = await dashboardService.getAllPurchases();
+
+        if (!purchases || purchases.length === 0) {
+            return res.status(404).json({ message: 'No purchases found.' });
+        }
+
+        return res.status(200).json({
+            purchases,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'An error occurred while fetching purchases.' });
+    }
+};
+
+
+////////////GET USER//////////////////////////////////
+
+
+exports.getUserCountController = async (req, res) => {
+    try {
+      const count = await dashboardService.getUserCount();  // Call the service to get user count
+      res.status(200).json({ count });  // Return the count as a JSON response
+    } catch (error) {
+      res.status(500).json({ message: error.message });  // Return error message if something goes wrong
+    }
+  };
+  
+  exports.deleteRentByDatesAndProduct = async (req, res) => {
+    const { startDate, endDate, productId } = req.body;
+  
+    try {
+      const result = await dashboardService.deleteRentByDatesAndProduct(startDate, endDate, productId);
+  
+      if (!result) {
+        return res.status(404).json({ message: 'No rent found for the given dates and product' });
+      }
+  
+      res.status(200).json({ message: 'Rent deleted successfully' });
+    } catch (error) {
+      res.status(500).json({ message: 'Error deleting rent', error });
+    }
+  };
+  

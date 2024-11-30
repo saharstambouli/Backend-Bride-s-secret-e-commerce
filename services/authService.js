@@ -40,3 +40,26 @@ exports.matchPassword = async (newP, code) => {
 
     }
 }
+
+
+exports.updatePassword = async (user, oldPassword, newPassword) => {
+    try {
+      // Compare the provided old password with the stored hashed password
+      const isMatch = await bcrypt.compare(oldPassword, user.password);
+      if (!isMatch) {
+        return { success: false, message: 'Old password is incorrect' };
+      }
+  
+      // Hash and update the new password
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      console.log("hashed password is : " + hashedPassword);
+      user.password = hashedPassword;
+      console.log("user password is : " + user.password);
+      await user.save();
+  
+      return { success: true, message: 'Password updated successfully' };
+    } catch (error) {
+      console.error(error);
+      return { success: false, message: 'An error occurred while updating the password' };
+    }
+  };

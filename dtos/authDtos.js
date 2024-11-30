@@ -49,3 +49,27 @@ exports.resetPasswordDto = [
         return true;
     })
 ]
+
+exports.updatePasswordDto = [
+    body('newPassword')
+      .isString()
+      .withMessage('New password must be a string')
+      .isLength({ min: 3 })
+      .withMessage('New password must be at least 3 characters long'),
+  
+    body('oldPassword')
+      .isString()
+      .withMessage('Old password must be a string')
+      .isLength({ min: 3 })
+      .withMessage('Old password must be at least 3 characters long'),
+  
+    check().custom((value, { req }) => {
+      const allowedProps = ['newPassword', 'oldPassword']; // Correct array format
+      const unallowedProps = Object.keys(req.body).filter(prop => !allowedProps.includes(prop));
+  
+      if (unallowedProps.length > 0) {
+        throw new Error(`Unexpected Fields: ${unallowedProps.join(', ')}`);
+      }
+      return true;
+    })
+  ];

@@ -13,6 +13,9 @@ router.delete('/deleteFromCart',authMiddleware.jwtMiddleware,userController.dele
 router.post('/purchase',authMiddleware.jwtMiddleware,userController.purchase)
 router.delete('/deleteFromWishList',authMiddleware.jwtMiddleware,userController.deleteFromWishlist)
 router.post('/send-newsletter',userController.Newsletter)
+router.post('/send-updates',userController.sendNewArrivalsUpdate)
+router.post('/send-messages',userController.handleContactForm)
+
 
 
 module.exports = router

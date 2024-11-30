@@ -11,6 +11,9 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+
+////////////////////////////////////////////////
+
 exports.sendEmailNewsletter = async (email) => {
   try {
     const emailTemplate = `
@@ -46,12 +49,14 @@ exports.sendEmailNewsletter = async (email) => {
   }
 };
 
+////////////////////////////////////////////////////
+
 exports.sendEmail = async (email, token) => {
     const resetUrl = `http://localhost:3000/reset-password/${token}`
     const currentYear = new Date().getFullYear();
     const htmlContent = ejs.render(emailTemplate, { resetUrl, currentYear });
     const info = await transporter.sendMail({
-      from: '"Brides Secret 👻" <BridesSecret@google.com>', // sender address
+      from: '"Brides Secret " <BridesSecret@google.com>', // sender address
       to: email, // list of receivers
       subject: "RESET Password", // Subject line
       text: "Hello this is the link to change ur password ",
@@ -59,7 +64,25 @@ exports.sendEmail = async (email, token) => {
     });
   }
   
+
+  //////////////////////////////////////////////////////////
   
+  exports.sendUpdateEmail = async (recipientEmails, subject, htmlContent) => {
+    const mailOptions = {
+      from: '"Brides Secret" <ecoartteampi@gmail.com>', // Updated 'from' address
+      to: recipientEmails, // Can be an array of emails
+      subject: subject,
+      html: htmlContent,
+    };
+  
+    try {
+      console.log("Preparing to send email to:", recipientEmails);
+      const info = await transporter.sendMail(mailOptions);
+      console.log("Email sent: ", info.response);
+    } catch (error) {
+      console.error("Error sending email: ", error);
+    }
+  };
   
   
   

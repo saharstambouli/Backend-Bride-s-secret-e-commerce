@@ -7,5 +7,6 @@ const authMiddleware = require('../middlewares/authMiddleware')
 router.post('/login', authDto.loginDto, dtoMiddleware, authController.login)
  router.post('/forgetPassword', authDto.forgetPasswordDto, dtoMiddleware, authController.forgetPassword);
 router.post('/resetPassword', authDto.resetPasswordDto, dtoMiddleware, authMiddleware.resetPasswordMiddleware, authController.resetPassword);
+router.put('/updatePassword', authDto.updatePasswordDto, dtoMiddleware, authMiddleware.jwtupdatePassword, authController.updatePassword);
 
 module.exports = router;
